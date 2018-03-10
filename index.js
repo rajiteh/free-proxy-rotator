@@ -59,20 +59,29 @@ function getProxyList() {
   return new Promise((resolve, reject) => {
     ProxyLists.getProxies(PROXY_OPTIONS)
       .on('data', proxies => {
-        proxies.forEach(proxy => {
-          if (!ip.isV4Format(proxy.ipAddress)) return;
-          if (proxy.port < 80) return;
-          if (proxy.port === PORT) return;
+        try {
+          proxies.forEach(proxy => {
+            if (!ip.isV4Format(proxy.ipAddress)) return;
+            if (proxy.port < 80) return;
+            if (proxy.port === PORT) return;
 
-          const el = `${proxy.ipAddress}:${proxy.port}`;
+            const el = `${proxy.ipAddress}:${proxy.port}`;
 
-          proxyList[el] = 0; // if i figure out a good way to ping in node, ping server here
-        });
+            proxyList[el] = 0; // if i figure out a good way to ping in node, ping server here
+          });
+        } catch(e) {
+          console.warn(e) 
+        }
       })
-      .on('end', () => {resolve(proxyList)})
+      .on('end', () => {
+        if (proxyList.length > 0) {
+          resolve(proxyList)
+        } else {
+          reject("No proxies from proxy-list")
+        }
+      })
       .on('error', err => {
-        console.log(err)
-        reject(err)
+        console.warn(err)
       });
   });
 }

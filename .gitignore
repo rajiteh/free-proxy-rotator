@@ -2,3 +2,4 @@ node_modules
 .python-version
 ha.pid
 haproxy.cfg
+proxy-lists.log
