@@ -21,7 +21,7 @@ const HAPROXY_CMD = 'haproxy';
 function renderProxies(proxies) {
   return proxies
     .filter(proxy => proxy !== undefined)
-    .map((proxy, i) => `  server proxy${i} ${proxy.trim()}`) // intentional 2 spaces
+    .map((proxy, i) => `  server proxy${i} ${proxy.trim()} check inter 30000`) // intentional 2 spaces
     .join('\n');
 }
 
@@ -74,11 +74,7 @@ function getProxyList() {
         }
       })
       .on('end', () => {
-        if (proxyList.length > 0) {
-          resolve(proxyList)
-        } else {
-          reject("No proxies from proxy-list")
-        }
+        resolve(proxyList)
       })
       .on('error', err => {
         console.warn(err)
